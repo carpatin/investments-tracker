@@ -28,6 +28,11 @@ git remote add origin git@github.com:carpatin/investments-tracker.git
 git push -u origin main
 ```
 
+# Run migrations
+```
+ddev artisan migrate
+```
+
 ...
 
 Goto: https://investments-tracker.ddev.site
