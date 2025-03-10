@@ -2,22 +2,24 @@
 
 namespace Database\Factories;
 
+use App\Models\Bank;
+use App\Models\BankAccount;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\BankAccount>
+ * @extends Factory<BankAccount>
  */
 class BankAccountFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'bank_id'  => Bank::inRandomOrder()->first()->id ?? Bank::factory()->create()->id,
+            'owner_id'  => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
+            'currency' => $this->faker->randomElement(['RON', 'EUR']),
+            'amount'   => $this->faker->randomFloat(2, 10, 50000),
+            'iban'     => $this->faker->iban('RO'),
         ];
     }
 }

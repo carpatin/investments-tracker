@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('mutual_fund_investments', static function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class);
+            $table->foreignIdFor(User::class, 'investor_id');
             $table->foreignIdFor(MutualFund::class);
             $table->decimal('unit_count');
             $table->decimal('unit_value');

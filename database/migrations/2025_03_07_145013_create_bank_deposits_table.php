@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('currency', 3);
             $table->decimal('deposit_amount');
             $table->decimal('interest_rate');
+            $table->date('opening_date');
             $table->date('maturity_date');
             $table->boolean('is_revolving');
             $table->boolean('is_capitalized')->nullable();

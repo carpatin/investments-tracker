@@ -15,7 +15,7 @@ return new class extends Migration {
         Schema::create('state_bond_investments', static function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(StateBondEmission::class);
-            $table->foreignIdFor(User::class);
+            $table->foreignIdFor(User::class,'investor_id');
             $table->decimal('principal');
             $table->unsignedInteger('unit_count');
             $table->decimal('unit_value');
