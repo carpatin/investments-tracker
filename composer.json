@@ -11,11 +11,13 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^11.44",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "mll-lab/laravel-graphiql": "^3.3",
         "nuwave/lighthouse": "^6.50"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.15",
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",

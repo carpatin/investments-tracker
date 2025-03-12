@@ -1,41 +1,171 @@
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
+"Currency codes supported by the application"
+enum Currency {
+    EUR
+    RON
+}
+
+"Risk levels for mutual funds"
+enum MutualFundRisk {
+    LOW @enum(value: "low")
+    MEDIUM @enum(value: "medium")
+    HIGH @enum(value: "high")
+}
+
 "Indicates what fields are available at the top level of a query operation."
 type Query {
+    "Returns logged in user"
+    me: User @auth
+
     "Find a single user by an identifying attribute."
     user(
-      "Search by primary key."
-      id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
+        "Search by primary key."
+        id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
 
-      "Search by email address."
-      email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
+        "Search by email address."
+        email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
     ): User @find
 
     "List multiple users."
     users(
-      "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
-      name: String @where(operator: "like")
+        "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
+        name: String @where(operator: "like")
     ): [User!]! @paginate(defaultCount: 10)
+
+    "List all banks"
+    banks: [Bank!]! @all
+
+    "List all asset managers"
+    assetMgmtCompanies: [AssetMgmtCompany!]! @all
+
+    "List all state bond emissions"
+    stateBondEmissions: [StateBondEmission!]! @paginate(defaultCount: 10)
 }
+
 
 "Account of a person who utilizes this application."
 type User {
-    "Unique primary key."
-    id: ID!
+    "User's bank current accounts"
+    bankAccounts: [BankAccount!]! @hasMany
+    "User's bank deposits"
+    bankDeposits: [BankDeposit!]! @hasMany
+    "User's investments into mutual funds"
+    mutualFundInvestments: [MutualFundInvestment!]! @hasMany
+    "User's investments into state bonds"
+    stateBondInvestments: [StateBondInvestment!]! @hasMany
 
+    id: ID!
     "Non-unique name."
     name: String!
-
     "Unique email address."
     email: String!
+}
 
-    "When the email was verified."
-    email_verified_at: DateTime
+type Bank {
+    accounts: [BankAccount!]! @hasMany
+    deposits: [BankDeposit!]! @hasMany
 
-    "When the account was created."
-    created_at: DateTime!
+    id: ID!
+    "The name of the bank"
+    name: String!
+}
 
-    "When the account was last updated."
-    updated_at: DateTime!
+type BankAccount {
+    "The bank where the account is opened"
+    bank: Bank! @belongsTo
+    "The application user that is the account owner"
+    owner: User! @belongsTo
+
+    id: ID!
+    "The current account currency"
+    currency: Currency!
+    "Account amount excluding the given currency"
+    amount: Float!
+    iban: String!
+}
+
+type BankDeposit {
+    "The bank where the account is opened"
+    bank: Bank! @belongsTo
+    "The application user that is the account owner"
+    owner: User! @belongsTo
+
+    id: ID!
+    "The deposit currency"
+    currency: Currency!
+    "Deposited amount excluding the given currency"
+    depositAmount: Float!
+    "The interest rate represented as percentage"
+    interestRate: Float!
+    "When the deposit was created"
+    openingDate: DateTime!
+    "When the deposit will reach maturity"
+    maturityDate: DateTime!
+    "Whether the deposit will be renewed automatically at maturity"
+    isRevolving: Boolean!
+    "Whether the accumulated interest will be added to the new deposit"
+    isCapitalized: Boolean
+}
+
+type AssetMgmtCompany {
+    "The mutual funds that the asset manager offers"
+    mutualFunds: [MutualFund!]! @hasMany
+
+    id: ID!
+    name: String!
+}
+
+type MutualFund {
+    "The asset manager that orchestrates the mutual fund"
+    assetMgmtCompany: AssetMgmtCompany! @belongsTo
+    "The individual investments into the mutual fund"
+    investments: [MutualFundInvestment!]! @hasMany
+
+    id: ID!
+    name: String!
+    "The currency in which investors contribute to the fund"
+    currency: Currency!
+    "The current fund unit net value"
+    unitValue: Float!
+    riskIndicator: MutualFundRisk!
+}
+
+"An individual mutual fund investment made by an investor"
+type MutualFundInvestment {
+    "The mutual fund the investment refers to"
+    mutualFund: MutualFund! @belongsTo
+    "The investor represented by a user"
+    investor: User! @belongsTo
+
+    id: ID!
+    unitCount: Float!
+    unitValue: Float!
+    investmentDate: DateTime!
+}
+
+"An emission round of state bonds"
+type StateBondEmission {
+    investments: [StateBondInvestment!]! @hasMany
+
+    id: ID!
+    name: String!
+    currency: Currency!
+    couponRate: Float!
+    unitValue: Float!
+    maturityDate: DateTime!
+}
+
+"An individual state bond investment made by an investor"
+type StateBondInvestment {
+    "The state bond emission the investment refers to"
+    emission: StateBondEmission! @belongsTo
+    "The investor represented by a user"
+    investor: User! @belongsTo
+
+    id: ID!
+    principal: Float!
+    unitCount: Int!
+    unitValue: Float!
 }
