@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
             ->count(3)
             ->has(
                 MutualFund::factory()
-                    ->count(3)
+                    ->count(20)
                     ->has(
                         MutualFundInvestment::factory()
                             ->count(50),
@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
             ->create();
 
         StateBondEmission::factory()
-            ->count(5)
+            ->count(20)
             ->has(
                 StateBondInvestment::factory()
                     ->count(10),

@@ -1,6 +1,9 @@
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
+"A date string with format `Y-m-d`, e.g. `2018-05-23`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
 "Currency codes supported by the application"
 enum Currency {
     EUR
@@ -17,7 +20,7 @@ enum MutualFundRisk {
 "Indicates what fields are available at the top level of a query operation."
 type Query {
     "Returns logged in user"
-    me: User @auth
+    currentUser: User @auth
 
     "Find a single user by an identifying attribute."
     user(
@@ -28,20 +31,38 @@ type Query {
         email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
     ): User @find
 
-    "List multiple users."
+    "Lists multiple users"
     users(
         "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
         name: String @where(operator: "like")
     ): [User!]! @paginate(defaultCount: 10)
 
-    "List all banks"
+    "Returns bank by ID or name"
+    bank(
+        id: ID @eq @rules(apply: ["prohibits:name", "required_without:name"])
+        name: String @like(key: "name", template: "%{}%") @rules(apply: ["prohibits:id", "required_without:id"])
+    ): Bank @first
+
+    "Lists all banks"
     banks: [Bank!]! @all
 
-    "List all asset managers"
-    assetMgmtCompanies: [AssetMgmtCompany!]! @all
+    "Returns asset manager by ID or name"
+    assetManager(
+        id: ID @eq @rules(apply: ["prohibits:name", "required_without:name"])
+        name: String @like(key: "name", template: "%{}%") @rules(apply: ["prohibits:id", "required_without:id"])
+    ): AssetMgmtCompany @first
 
-    "List all state bond emissions"
-    stateBondEmissions: [StateBondEmission!]! @paginate(defaultCount: 10)
+    "Lists all asset managers"
+    assetManagers: [AssetMgmtCompany!]! @all
+
+    "Returns state bond emissions by year and/or month of maturity"
+    stateBondsByMaturity(
+        maturityYear: Int! @rules(apply: ["required_with:maturityMonth"])
+        maturityMonth: Int
+    ): [StateBondEmission!]! @field(resolver: "StateBondsByMaturity")
+
+    "Lists state bond emissions paginated"
+    stateBonds: [StateBondEmission!]! @paginate(defaultCount: 10)
 }
 
 
@@ -100,9 +121,9 @@ type BankDeposit {
     "The interest rate represented as percentage"
     interestRate: Float!
     "When the deposit was created"
-    openingDate: DateTime!
+    openingDate: Date!
     "When the deposit will reach maturity"
-    maturityDate: DateTime!
+    maturityDate: Date!
     "Whether the deposit will be renewed automatically at maturity"
     isRevolving: Boolean!
     "Whether the accumulated interest will be added to the new deposit"
@@ -142,19 +163,19 @@ type MutualFundInvestment {
     id: ID!
     unitCount: Float!
     unitValue: Float!
-    investmentDate: DateTime!
+    investmentDate: Date!
 }
 
 "An emission round of state bonds"
 type StateBondEmission {
-    investments: [StateBondInvestment!]! @hasMany
+    subscriptions: [StateBondInvestment!]! @hasMany(relation: "investments")
 
     id: ID!
     name: String!
     currency: Currency!
     couponRate: Float!
     unitValue: Float!
-    maturityDate: DateTime!
+    maturityDate: Date!
 }
 
 "An individual state bond investment made by an investor"

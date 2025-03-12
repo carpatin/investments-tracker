@@ -12,6 +12,10 @@ class BankDeposit extends Model
     /** @use HasFactory<BankDepositFactory> */
     use HasFactory;
 
+    protected $casts = [
+        'opening_date'  => 'date:Y-m-d', // only keeps the date part
+        'maturity_date' => 'date:Y-m-d', // only keeps the date part
+    ];
 
     public function bank(): BelongsTo
     {

@@ -12,14 +12,16 @@ class StateBondEmissionFactory extends Factory
 {
     public function definition(): array
     {
+        $date = $this->faker->dateTimeBetween('-2 years', '+3 years');
+        $year = $date->format('y');
+        $month = $date->format('m');
+
         return [
-            'name'          => 'R'.$this->faker->numberBetween(25, 35).
-                $this->faker->numberBetween(1, 12).
-                $this->faker->randomElement(['A', 'B', 'C', 'AE', 'BE', 'CE']),
+            'name'          => 'R'.$year.$month.$this->faker->randomElement(['A', 'B', 'C', 'AE', 'BE', 'CE']),
             'currency'      => $this->faker->randomElement(['RON', 'EUR']),
             'coupon_rate'   => $this->faker->randomFloat(2, 3, 9),
             'unit_value'    => 100,
-            'maturity_date' => $this->faker->dateTimeBetween('-3 years', '+6 years'),
+            'maturity_date' => $date,
         ];
     }
 }

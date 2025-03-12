@@ -12,6 +12,10 @@ class MutualFundInvestment extends Model
     /** @use HasFactory<MutualFundInvestmentFactory> */
     use HasFactory;
 
+    protected $casts = [
+        'investment_date' => 'date:Y-m-d', // only keeps the date part
+    ];
+
     public function mutualFund(): BelongsTo
     {
         return $this->belongsTo(MutualFund::class);

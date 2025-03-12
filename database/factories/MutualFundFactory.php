@@ -13,10 +13,28 @@ class MutualFundFactory extends Factory
 {
     public function definition(): array
     {
+        $fundNames = [
+            'Simfonia',
+            'Global',
+            'Fix',
+            'Plus',
+            'S&P500',
+            'MSCI World',
+            'BET',
+            'Obligatiuni',
+            'Actiuni',
+            'Simplu',
+            'Energie',
+            'Agro',
+            'Technology',
+            'Semiconductors',
+            'Fintech',
+        ];
+
         return [
             'asset_mgmt_company_id' =>
                 AssetMgmtCompany::inRandomOrder()->first()->id ?? AssetMgmtCompany::factory()->create()->id,
-            'name'                  => $this->faker->word(),
+            'name'                  => $this->faker->randomElement($fundNames).$this->faker->numberBetween(1, 100),
             'currency'              => $this->faker->randomElement(['RON', 'EUR']),
             'unit_value'            => $this->faker->randomFloat(2, 50, 150),
             'risk_indicator'        => $this->faker->randomElement(['low', 'medium', 'high']),

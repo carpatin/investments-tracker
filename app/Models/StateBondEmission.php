@@ -12,6 +12,10 @@ class StateBondEmission extends Model
     /** @use HasFactory<StateBondEmissionFactory> */
     use HasFactory;
 
+    protected $casts = [
+        'maturity_date' => 'date:Y-m-d', // only keeps the date part
+    ];
+
     public function investments(): HasMany
     {
         return $this->hasMany(StateBondInvestment::class);
