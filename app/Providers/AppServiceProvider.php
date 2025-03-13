@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\GraphQL\Resolvers\DefaultFieldResolver;
+use App\GraphQL\Scalars\PortfolioCategoryType;
 use GraphQL\Executor\Executor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Log;
+use Nuwave\Lighthouse\Schema\TypeRegistry;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,5 +34,9 @@ class AppServiceProvider extends ServiceProvider
 
         // set our own GraphQL default field resolver
         Executor::setDefaultFieldResolver([DefaultFieldResolver::class, 'defaultFieldResolver']);
+
+        // register our custom types
+//        $typeRegistry = app(TypeRegistry::class);
+//        $typeRegistry->register(new PortfolioCategoryType());
     }
 }

@@ -14,7 +14,7 @@ class StateBondInvestment extends Model
 
     public function emission(): BelongsTo
     {
-        return $this->belongsTo(StateBondEmission::class);
+        return $this->belongsTo(StateBondEmission::class, 'state_bond_emission_id');
     }
 
     public function investor(): BelongsTo

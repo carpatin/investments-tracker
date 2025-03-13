@@ -4,6 +4,9 @@ scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date
 "A date string with format `Y-m-d`, e.g. `2018-05-23`."
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
+"A custom scalar type to represent a portfolio category"
+scalar PortfolioCategory @scalar(class: "App\\GraphQL\\Scalars\\PortfolioCategoryType")
+
 "Currency codes supported by the application"
 enum Currency {
     EUR
@@ -79,6 +82,19 @@ type Query {
     stateBonds: [StateBondEmission!]! @paginate(defaultCount: 10)
 }
 
+###################
+# NON-MODEL TYPES #
+###################
+type PortfolioTotal {
+    total: Float!
+    currency: Currency!
+}
+
+type PortfolioCategoryTotal {
+    total: Float!
+    portfolioCategory: PortfolioCategory!
+    currency: Currency!
+}
 
 ###############
 # MODEL TYPES #
@@ -100,6 +116,11 @@ type User {
     name: String!
     "Unique email address."
     email: String!
+
+    "Aggregates user's wealth into one total"
+    portfolioTotal(currency: Currency! = RON): PortfolioTotal @field(resolver: "PortfolioTotal")
+    "Aggregates user's wealth into categorized totals"
+    portfolioCategoriesTotals(currency: Currency! = RON) : [PortfolioCategoryTotal!]! @field(resolver: "PortfolioCategoriesTotals")
 }
 
 type Bank {
@@ -208,7 +229,6 @@ type StateBondInvestment {
     unitCount: Int!
     unitValue: Float!
 }
-
 
 ###############
 # INPUT TYPES #
