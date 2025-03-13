@@ -12,6 +12,8 @@ class AssetMgmtCompany extends Model
     /** @use HasFactory<AssetMgmtCompanyFactory> */
     use HasFactory;
 
+    protected $guarded = ['id']; // protects 'id', everything else is fillable
+
     public function mutualFunds(): HasMany
     {
         return $this->hasMany(MutualFund::class);

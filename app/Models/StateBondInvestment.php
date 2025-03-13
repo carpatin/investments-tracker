@@ -12,6 +12,8 @@ class StateBondInvestment extends Model
     /** @use HasFactory<StateBondInvestmentFactory> */
     use HasFactory;
 
+    protected $guarded = ['id']; // protects 'id', everything else is fillable
+
     public function emission(): BelongsTo
     {
         return $this->belongsTo(StateBondEmission::class, 'state_bond_emission_id');

@@ -13,6 +13,8 @@ class MutualFund extends Model
     /** @use HasFactory<MutualFundFactory> */
     use HasFactory;
 
+    protected $guarded = ['id']; // protects 'id', everything else is fillable
+
     public function assetMgmtCompany(): BelongsTo
     {
         return $this->belongsTo(AssetMgmtCompany::class);

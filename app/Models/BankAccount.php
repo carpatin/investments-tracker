@@ -12,6 +12,8 @@ class BankAccount extends Model
     /** @use HasFactory<BankAccountFactory> */
     use HasFactory;
 
+    protected $guarded = ['id']; // protects 'id', everything else is fillable
+
     public function bank(): BelongsTo
     {
         return $this->belongsTo(Bank::class);

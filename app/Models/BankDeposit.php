@@ -12,6 +12,8 @@ class BankDeposit extends Model
     /** @use HasFactory<BankDepositFactory> */
     use HasFactory;
 
+    protected $guarded = ['id', 'bank_id', 'owner_id'];
+
     protected $casts = [
         'opening_date'  => 'date:Y-m-d', // only keeps the date part
         'maturity_date' => 'date:Y-m-d', // only keeps the date part

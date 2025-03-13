@@ -16,6 +16,8 @@ class MutualFundInvestment extends Model
         'investment_date' => 'date:Y-m-d', // only keeps the date part
     ];
 
+    protected $guarded = ['id']; // protects 'id', everything else is fillable
+
     public function mutualFund(): BelongsTo
     {
         return $this->belongsTo(MutualFund::class);

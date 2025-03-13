@@ -82,6 +82,17 @@ type Query {
     stateBonds: [StateBondEmission!]! @paginate(defaultCount: 10)
 }
 
+
+#################
+# MUTATION TYPE #
+#################
+"Indicates what fields are available at the top level of a mutation operation."
+type Mutation {
+    "Creates a new bank deposit in a given bank and for a given user"
+    createBankDeposit(input: CreateBankDepositInput!): BankDeposit! @field(resolver: "CreateBankDeposit")
+}
+
+
 ###################
 # NON-MODEL TYPES #
 ###################
@@ -95,6 +106,7 @@ type PortfolioCategoryTotal {
     portfolioCategory: PortfolioCategory!
     currency: Currency!
 }
+
 
 ###############
 # MODEL TYPES #
@@ -230,9 +242,12 @@ type StateBondInvestment {
     unitValue: Float!
 }
 
+
 ###############
 # INPUT TYPES #
 ###############
+
+# For querying
 
 input AssetMgmtSearchCriteria {
     id: ID
@@ -243,4 +258,18 @@ input MutualFundSearchCriteria {
     assetManager: AssetMgmtSearchCriteria
     currency: Currency
     riskIndicator: MutualFundRisk
+}
+
+# For mutations
+
+input CreateBankDepositInput {
+    bankId: ID!
+    ownerId: ID!
+    currency: Currency!
+    depositAmount: Float!
+    interestRate: Float!
+    openingDate: Date!
+    maturityDate: Date!
+    isRevolving: Boolean!
+    isCapitalized: Boolean
 }

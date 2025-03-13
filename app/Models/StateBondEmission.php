@@ -16,6 +16,8 @@ class StateBondEmission extends Model
         'maturity_date' => 'date:Y-m-d', // only keeps the date part
     ];
 
+    protected $guarded = ['id']; // protects 'id', everything else is fillable
+
     public function investments(): HasMany
     {
         return $this->hasMany(StateBondInvestment::class);

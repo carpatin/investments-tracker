@@ -12,6 +12,8 @@ class Bank extends Model
     /** @use HasFactory<BankFactory> */
     use HasFactory;
 
+    protected $guarded = ['id']; // protects 'id', everything else is fillable
+
     public function accounts(): HasMany
     {
         return $this->hasMany(BankAccount::class);
