@@ -17,54 +17,72 @@ enum MutualFundRisk {
     HIGH @enum(value: "high")
 }
 
+##############
+# QUERY TYPE #
+##############
+
 "Indicates what fields are available at the top level of a query operation."
 type Query {
-    "Returns logged in user"
+    "Returns logged in user."
     currentUser: User @auth
 
-    "Find a single user by an identifying attribute."
+    "Returns user by ID or email."
     user(
-        "Search by primary key."
+        "Search by entity ID."
         id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
 
         "Search by email address."
         email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
     ): User @find
 
-    "Lists multiple users"
+    "Returns users paginated."
     users(
         "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
         name: String @where(operator: "like")
     ): [User!]! @paginate(defaultCount: 10)
 
-    "Returns bank by ID or name"
+    "Returns bank by ID or name."
     bank(
+        "Search by entity ID."
         id: ID @eq @rules(apply: ["prohibits:name", "required_without:name"])
+        "Search by bank name."
         name: String @like(key: "name", template: "%{}%") @rules(apply: ["prohibits:id", "required_without:id"])
     ): Bank @first
 
-    "Lists all banks"
+    "Returns all banks."
     banks: [Bank!]! @all
 
-    "Returns asset manager by ID or name"
+    "Returns asset manager by ID or name."
     assetManager(
+        "Search by entity ID."
         id: ID @eq @rules(apply: ["prohibits:name", "required_without:name"])
+        "Search by asset manager name."
         name: String @like(key: "name", template: "%{}%") @rules(apply: ["prohibits:id", "required_without:id"])
     ): AssetMgmtCompany @first
 
-    "Lists all asset managers"
+    "Returns all asset managers."
     assetManagers: [AssetMgmtCompany!]! @all
 
-    "Returns state bond emissions by year and/or month of maturity"
+    searchMutualFunds(
+        criteria: MutualFundSearchCriteria!
+    ): [MutualFund!]! @field(resolver: "SearchMutualFunds")
+
+    "Returns state bond emissions by year and/or month of maturity."
     stateBondsByMaturity(
+        "Filter by year of maturity."
         maturityYear: Int! @rules(apply: ["required_with:maturityMonth"])
+        "(Optional) Filter also by month of maturity."
         maturityMonth: Int
     ): [StateBondEmission!]! @field(resolver: "StateBondsByMaturity")
 
-    "Lists state bond emissions paginated"
+    "Returns state bond emissions paginated."
     stateBonds: [StateBondEmission!]! @paginate(defaultCount: 10)
 }
 
+
+###############
+# MODEL TYPES #
+###############
 
 "Account of a person who utilizes this application."
 type User {
@@ -189,4 +207,20 @@ type StateBondInvestment {
     principal: Float!
     unitCount: Int!
     unitValue: Float!
+}
+
+
+###############
+# INPUT TYPES #
+###############
+
+input AssetMgmtSearchCriteria {
+    id: ID
+    name: String
+}
+
+input MutualFundSearchCriteria {
+    assetManager: AssetMgmtSearchCriteria
+    currency: Currency
+    riskIndicator: MutualFundRisk
 }

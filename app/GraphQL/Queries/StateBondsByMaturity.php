@@ -3,10 +3,11 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\StateBondEmission;
+use Illuminate\Support\Collection;
 
 final readonly class StateBondsByMaturity
 {
-    public function __invoke(null $_, array $args)
+    public function __invoke(null $_, array $args): Collection
     {
         $year = $args['maturityYear'];
         $month = $args['maturityMonth'] ?? null;
