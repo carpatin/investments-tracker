@@ -44,6 +44,29 @@ ddev artisan migrate
 ddev artisan db:seed
 ```
 
-...
+# Check the available functionality
 
-Goto: https://investments-tracker.ddev.site
+### Obtain API Bearer token from:
+
+POST [https://investments-tracker.ddev.site/api/login](https://investments-tracker.ddev.site/api/login)
+
+By sending a body like:
+```
+{
+  "email" : "address@example.org",
+  "password": "password"
+}
+
+```
+
+### Access the GraphQL endpoint at:
+
+POST [https://investments-tracker.ddev.site/graphql](https://investments-tracker.ddev.site/graphql)
+
+### Access the GraphiQL dashboard at:
+
+[https://investments-tracker.ddev.site/graphiql](https://investments-tracker.ddev.site/graphiql)
+
+### Access the web application at:
+
+[https://investments-tracker.ddev.site](https://investments-tracker.ddev.site)

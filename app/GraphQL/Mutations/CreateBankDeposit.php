@@ -38,7 +38,7 @@ final readonly class CreateBankDeposit
             'is_capitalized' => $input['isCapitalized'] ?? null,
         ];
 
-        // validate the input fields
+        // validate the prepared model fields
         $validator = Validator::make($data, [
             'currency'       => 'required|string|regex:/^[A-Z]{3}$/',
             'deposit_amount' => 'required|numeric|min:0',
@@ -58,7 +58,6 @@ final readonly class CreateBankDeposit
         $deposit->owner()->associate($user);
         $deposit->save();
 
-        // validation passed — create and save the bank deposit
         return $deposit;
     }
 }

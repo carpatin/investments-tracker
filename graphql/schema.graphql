@@ -88,8 +88,12 @@ type Query {
 #################
 "Indicates what fields are available at the top level of a mutation operation."
 type Mutation {
-    "Creates a new bank deposit in a given bank and for a given user"
+    "Creates a new bank deposit in a given bank and for a given user."
     createBankDeposit(input: CreateBankDepositInput!): BankDeposit! @field(resolver: "CreateBankDeposit")
+    "Creates a new mutual fund investment for a given user."
+    createMutualFundInvestment(input: MutualFundInvestmentInput!): MutualFundInvestment @field(resolver: "CreateMutualFundInvestment")
+    "Creates a new state bond investment for a given user."
+    createStateBondInvestment(input: StateBondInvestmentInput!): StateBondInvestment @field(resolver: "CreateStateBondInvestment")
 }
 
 
@@ -265,6 +269,7 @@ input MutualFundSearchCriteria {
 input CreateBankDepositInput {
     bankId: ID!
     ownerId: ID!
+
     currency: Currency!
     depositAmount: Float!
     interestRate: Float!
@@ -272,4 +277,21 @@ input CreateBankDepositInput {
     maturityDate: Date!
     isRevolving: Boolean!
     isCapitalized: Boolean
+}
+
+input MutualFundInvestmentInput {
+    mutualFundId: ID!
+    investorId: ID!
+
+    unitCount: Float!
+    unitValue: Float!
+    investmentDate: Date!
+}
+
+input StateBondInvestmentInput {
+    emissionId: ID!
+    investorId: ID!
+
+    unitCount: Int!
+    unitValue: Float!
 }
