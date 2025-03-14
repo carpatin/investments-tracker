@@ -3,12 +3,12 @@
 namespace App\Providers;
 
 use App\GraphQL\Resolvers\DefaultFieldResolver;
-use App\GraphQL\Scalars\PortfolioCategoryType;
+use App\Models\User;
 use GraphQL\Executor\Executor;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Log;
-use Nuwave\Lighthouse\Schema\TypeRegistry;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,8 +35,12 @@ class AppServiceProvider extends ServiceProvider
         // set our own GraphQL default field resolver
         Executor::setDefaultFieldResolver([DefaultFieldResolver::class, 'defaultFieldResolver']);
 
-        // register our custom types
-//        $typeRegistry = app(TypeRegistry::class);
-//        $typeRegistry->register(new PortfolioCategoryType());
+        Gate::define('access-admin', static function (User $currentUser) {
+            return $currentUser->isAdmin();
+        });
+
+        Gate::define('access-admin-or-self', static function (User $currentUser, $id) {
+            return $currentUser->isAdmin() || $currentUser->isAdminOrSelf($id);
+        });
     }
 }

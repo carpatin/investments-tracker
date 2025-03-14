@@ -2,19 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\GraphQL\Queries;
+namespace App\GraphQL\Types\User;
 
 use App\Models\BankAccount;
 use App\Models\BankDeposit;
 use App\Models\MutualFundInvestment;
 use App\Models\StateBondInvestment;
+use App\Models\User;
 use Illuminate\Support\Collection;
 
-final readonly class PortfolioItemsByUser
+final readonly class PortfolioItems
 {
-    public function __invoke(null $_, array $args): Collection
+    public function __invoke(User $user, array $args): Collection
     {
-        $userId = $args['userId'];
+        $userId = $user->id;
 
         $bankAccounts = BankAccount::where('owner_id', $userId)->get();
         $bankDeposits = BankDeposit::where('owner_id', $userId)->get();

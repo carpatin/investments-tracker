@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\AssetMgmtCompany;
@@ -13,8 +15,6 @@ use App\Models\StateBondInvestment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -22,6 +22,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        User::factory(1)->create(
+            [
+                'name'  => 'Administrator',
+                'email' => 'admin@investments.com',
+                'role'  => 'admin',
+            ]
+        );
+
         User::factory(10)->create();
         Bank::factory()
             ->count(7)
@@ -44,7 +52,7 @@ class DatabaseSeeder extends Seeder
                     ->count(20)
                     ->has(
                         MutualFundInvestment::factory()
-                            ->count(50),
+                            ->count(20),
                         'investments'
                     ),
                 'mutualFunds'

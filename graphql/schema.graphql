@@ -36,13 +36,13 @@ type Query {
 
         "Search by email address."
         email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
-    ): User @find
+    ): User @find @can(ability: "access-admin")
 
     "Returns users paginated."
     users(
         "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
         name: String @where(operator: "like")
-    ): [User!]! @paginate(defaultCount: 10)
+    ): [User!]! @paginate(defaultCount: 10) @can(ability: "access-admin")
 
     "Returns bank by ID or name."
     bank(
@@ -80,9 +80,6 @@ type Query {
 
     "Returns state bond emissions paginated."
     stateBonds: [StateBondEmission!]! @paginate(defaultCount: 10)
-
-    "Returns all portfolio items by user ID."
-    portfolioItemsByUser(userId: ID!): [PortfolioItem!]! @field(resolver: "PortfolioItemsByUser")
 }
 
 
@@ -92,11 +89,11 @@ type Query {
 "Indicates what fields are available at the top level of a mutation operation."
 type Mutation {
     "Creates a new bank deposit in a given bank and for a given user."
-    createBankDeposit(input: CreateBankDepositInput!): BankDeposit! @field(resolver: "CreateBankDeposit")
+    createBankDeposit(input: CreateBankDepositInput!): BankDeposit! @field(resolver: "CreateBankDeposit") @can(ability: "access-admin")
     "Creates a new mutual fund investment for a given user."
-    createMutualFundInvestment(input: MutualFundInvestmentInput!): MutualFundInvestment @field(resolver: "CreateMutualFundInvestment")
+    createMutualFundInvestment(input: MutualFundInvestmentInput!): MutualFundInvestment @field(resolver: "CreateMutualFundInvestment") @can(ability: "access-admin")
     "Creates a new state bond investment for a given user."
-    createStateBondInvestment(input: StateBondInvestmentInput!): StateBondInvestment @field(resolver: "CreateStateBondInvestment")
+    createStateBondInvestment(input: StateBondInvestmentInput!): StateBondInvestment @field(resolver: "CreateStateBondInvestment") @can(ability: "access-admin")
 }
 
 
@@ -143,6 +140,8 @@ type User {
     "Unique email address."
     email: String!
 
+    "Collects all user's portfolio items in one collection"
+    portfolioItems:  [PortfolioItem!]! @field(resolver: "PortfolioItems")
     "Aggregates user's wealth into one total"
     portfolioTotal(currency: Currency! = RON): PortfolioTotal @field(resolver: "PortfolioTotal")
     "Aggregates user's wealth into categorized totals"
@@ -150,8 +149,8 @@ type User {
 }
 
 type Bank {
-    accounts: [BankAccount!]! @hasMany
-    deposits: [BankDeposit!]! @hasMany
+    accounts: [BankAccount!]! @hasMany @guard
+    deposits: [BankDeposit!]! @hasMany @guard
 
     id: ID!
     "The name of the bank"
@@ -207,7 +206,7 @@ type MutualFund {
     "The asset manager that orchestrates the mutual fund"
     assetMgmtCompany: AssetMgmtCompany! @belongsTo
     "The individual investments into the mutual fund"
-    investments: [MutualFundInvestment!]! @hasMany
+    investments: [MutualFundInvestment!]! @hasMany @guard
 
     id: ID!
     name: String!
@@ -236,7 +235,7 @@ type MutualFundInvestment {
 
 "An emission round of state bonds"
 type StateBondEmission {
-    subscriptions: [StateBondInvestment!]! @hasMany(relation: "investments")
+    subscriptions: [StateBondInvestment!]! @hasMany(relation: "investments") @guard
 
     id: ID!
     name: String!
