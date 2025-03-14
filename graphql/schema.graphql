@@ -80,6 +80,9 @@ type Query {
 
     "Returns state bond emissions paginated."
     stateBonds: [StateBondEmission!]! @paginate(defaultCount: 10)
+
+    "Returns all portfolio items by user ID."
+    portfolioItemsByUser(userId: ID!): [PortfolioItem!]! @field(resolver: "PortfolioItemsByUser")
 }
 
 
@@ -110,6 +113,13 @@ type PortfolioCategoryTotal {
     portfolioCategory: PortfolioCategory!
     currency: Currency!
 }
+
+
+###############
+# UNION TYPES #
+###############
+
+union PortfolioItem = BankAccount | BankDeposit | MutualFundInvestment | StateBondInvestment
 
 
 ###############
@@ -219,6 +229,9 @@ type MutualFundInvestment {
     unitCount: Float!
     unitValue: Float!
     investmentDate: Date!
+
+    "The current value of the investment taking into consideration today's fund unit value"
+    currentValue: Float! @field(resolver: "CurrentValue")
 }
 
 "An emission round of state bonds"
