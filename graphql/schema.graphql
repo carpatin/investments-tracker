@@ -141,7 +141,7 @@ type User {
     email: String!
 
     "Collects all user's portfolio items in one collection"
-    portfolioItems:  [PortfolioItem!]! @field(resolver: "PortfolioItems")
+    portfolioItems: [PortfolioItem!]! @field(resolver: "PortfolioItems")
     "Aggregates user's wealth into one total"
     portfolioTotal(currency: Currency! = RON): PortfolioTotal @field(resolver: "PortfolioTotal")
     "Aggregates user's wealth into categorized totals"
