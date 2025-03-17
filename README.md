@@ -1,3 +1,9 @@
+# Application domain
+
+The application aims at helping investors track their various investments.
+
+![Database diagram](./docs/database.png)
+
 # Clone the repository
 
 `git clone git@github.com:carpatin/investments-tracker.git`
@@ -70,3 +76,7 @@ POST [https://investments-tracker.ddev.site/graphql](https://investments-tracker
 ### Access the web application at:
 
 [https://investments-tracker.ddev.site](https://investments-tracker.ddev.site)
+
+### Postman collection with example requests
+
+[postman/GraphQL.postman_collection.json](postman/GraphQL.postman_collection.json)

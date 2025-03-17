@@ -1,0 +1,556 @@
+{
+	"info": {
+		"_postman_id": "b80bd9f3-524d-4958-b455-7a4c3be9b6d1",
+		"name": "GraphQL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1471710"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "(Query) User - by id with portfolio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{BEARER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query UserPortfolio($email: String!){\r\n  user(email: $email){\r\n    name\r\n    email\r\n    totalInRON: portfolioTotal(currency: RON) {\r\n      total\r\n      currency\r\n    }\r\n    totalInEUR: portfolioTotal(currency: EUR) {\r\n      total\r\n      currency\r\n    }\r\n    categorizedTotalInRON: portfolioCategoriesTotals(currency: RON) {\r\n      total\r\n      portfolioCategory\r\n      currency\r\n    }\r\n    categorizedTotalInEUR: portfolioCategoriesTotals(currency: EUR) {\r\n      total\r\n      portfolioCategory\r\n      currency\r\n    }\r\n  }\r\n}",
+								"variables": "{\r\n  \"email\": \"garfield.boyer@example.org\",\r\n}"
+							}
+						},
+						"url": {
+							"raw": "https://investments-tracker.ddev.site/graphql",
+							"protocol": "https",
+							"host": [
+								"investments-tracker",
+								"ddev",
+								"site"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Query) Users - by name pattern match",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{BEARER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query FindUserByName($name: String!) {\r\n  users(name: $name, first: 5, page: 1) {\r\n    data{ \r\n      name\r\n      id\r\n      email\r\n    }\r\n    paginatorInfo {\r\n      currentPage\r\n      total\r\n      perPage\r\n    }\r\n  }\r\n}",
+								"variables": "{\r\n  \"name\" : \"%Dr.%\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "https://investments-tracker.ddev.site/graphql",
+							"protocol": "https",
+							"host": [
+								"investments-tracker",
+								"ddev",
+								"site"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Mutation) CreateBankDeposit",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{BEARER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\r\n  createBankDeposit(\r\n    input: {\r\n      bankId: 2\r\n      ownerId: 1\r\n      currency: RON\r\n      depositAmount: 10000\r\n      interestRate: 5.5\r\n      openingDate: \"2025-04-14\"\r\n      maturityDate: \"2026-04-13\"\r\n      isRevolving: true\r\n      isCapitalized: true\r\n    }\r\n  ) {\r\n    bank {\r\n      name\r\n    }\r\n    owner {\r\n      name\r\n      email\r\n    }\r\n    id\r\n    depositAmount\r\n    currency\r\n    interestRate\r\n  }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "https://investments-tracker.ddev.site/graphql",
+							"protocol": "https",
+							"host": [
+								"investments-tracker",
+								"ddev",
+								"site"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Mutation) CreateMutualFundInvestment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{BEARER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateInvestment($fid: ID!, $iid: ID!, $uc: Float!, $uv: Float!, $id: Date!){\r\n  createMutualFundInvestment(\r\n    input: {\r\n      mutualFundId: $fid\r\n      investorId: $iid\r\n      unitCount: $uc\r\n      unitValue: $uv\r\n      investmentDate: $id\r\n    }\r\n  ) {\r\n    mutualFund {\r\n      name\r\n    }\r\n    investor {\r\n      name\r\n      email\r\n    }\r\n    id\r\n    unitCount\r\n    unitValue\r\n    investmentDate\r\n  }\r\n}",
+								"variables": "{\r\n  \"fid\": 3,\r\n  \"iid\": 999,\r\n  \"uc\": 150.5,\r\n  \"uv\": 123.5,\r\n  \"id\": \"2025-03-14\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "https://investments-tracker.ddev.site/graphql",
+							"protocol": "https",
+							"host": [
+								"investments-tracker",
+								"ddev",
+								"site"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Mutation) CreateStateBondInvestment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{BEARER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateInvestment($eid: ID!, $uid: ID!, $uc: Int!, $uv: Float!){\r\n  createStateBondInvestment(\r\n    input: {\r\n      emissionId: $eid\r\n      investorId: $uid\r\n      unitCount: $uc\r\n      unitValue: $uv\r\n    }\r\n  ) {\r\n    emission {\r\n      name\r\n    }\r\n    investor {\r\n      name\r\n      email\r\n    }\r\n    id\r\n    principal\r\n    unitCount\r\n    unitValue\r\n  }\r\n}",
+								"variables": "{\r\n  \"eid\": 1,\r\n  \"uid\": 1,\r\n  \"uc\": 150,\r\n  \"uv\": 123.5\r\n}"
+							}
+						},
+						"url": {
+							"raw": "https://investments-tracker.ddev.site/graphql",
+							"protocol": "https",
+							"host": [
+								"investments-tracker",
+								"ddev",
+								"site"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{BEARER_TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Investor",
+			"item": [
+				{
+					"name": "(Query) CurrentUser - with portfolio",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{BEARER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query CurrentUser{\r\n  currentUser {\r\n    name\r\n    id\r\n    email\r\n  bankDeposits {\r\n    currency\r\n    depositAmount\r\n    bank {\r\n      name\r\n    }\r\n  }\r\n    portfolioItems {\r\n      ... on BankAccount {\r\n        __typename\r\n        bank {\r\n          name\r\n        }\r\n        amount\r\n        currency\r\n      }\r\n      ... on MutualFundInvestment {\r\n        __typename\r\n        mutualFund {\r\n          name\r\n          currency\r\n        }\r\n        currentValue\r\n      }\r\n      ... on StateBondInvestment {\r\n        __typename\r\n        emission {\r\n          name\r\n          currency\r\n        }\r\n        principal\r\n      }\r\n    },\r\n\r\n    totalInRON: portfolioTotal(currency: RON) {\r\n      total\r\n      currency\r\n    }\r\n\r\n    totalInEUR: portfolioTotal(currency: EUR) {\r\n      total\r\n      currency\r\n    }\r\n\r\n    categorizedTotalInRON: portfolioCategoriesTotals(currency: RON) {\r\n      total\r\n      portfolioCategory\r\n      currency\r\n    }\r\n    \r\n    categorizedTotalInEUR: portfolioCategoriesTotals(currency: EUR) {\r\n      total\r\n      portfolioCategory\r\n      currency\r\n    }\r\n  }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "https://investments-tracker.ddev.site/graphql",
+							"protocol": "https",
+							"host": [
+								"investments-tracker",
+								"ddev",
+								"site"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{BEARER_TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Unauthenticated",
+			"item": [
+				{
+					"name": "(Query) SearchMutualFunds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query SearchMutualFunds( $managerName: String, $currency: Currency,  $riskIndicator: MutualFundRisk ) {\r\n  searchMutualFunds(\r\n    criteria: {\r\n      assetManager: {\r\n        name: $managerName\r\n        }, \r\n      currency: $currency, \r\n      riskIndicator: $riskIndicator \r\n      }\r\n  ) {\r\n    id\r\n    name\r\n    riskIndicator\r\n    currency\r\n    assetMgmtCompany {\r\n      name\r\n    }\r\n  }\r\n}",
+								"variables": "{\r\n  \"managerName\": \"Asset\",\r\n  \"currency\" : \"RON\",\r\n  \"riskIndicator\" : \"MEDIUM\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "https://investments-tracker.ddev.site/graphql",
+							"protocol": "https",
+							"host": [
+								"investments-tracker",
+								"ddev",
+								"site"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Query) Banks - only name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\r\n  banks {\r\n    name\r\n  }\r\n}",
+								"variables": "{\r\n  \"managerName\": \"BRD\",\r\n  \"currency\" : \"RON\",\r\n  \"riskIndicator\" : \"MEDIUM\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "https://investments-tracker.ddev.site/graphql",
+							"protocol": "https",
+							"host": [
+								"investments-tracker",
+								"ddev",
+								"site"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Query) Banks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\r\n  banks {\r\n    name\r\n    deposits {\r\n      owner {\r\n        name\r\n        email\r\n      }\r\n      depositAmount\r\n      currency\r\n      interestRate\r\n    }\r\n  }\r\n}",
+								"variables": "{\r\n  \"managerName\": \"BRD\",\r\n  \"currency\" : \"RON\",\r\n  \"riskIndicator\" : \"MEDIUM\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "https://investments-tracker.ddev.site/graphql",
+							"protocol": "https",
+							"host": [
+								"investments-tracker",
+								"ddev",
+								"site"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(Query) State bonds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\r\n  stateBonds(page:1, first:5) {\r\n    data{ \r\n      name\r\n      # subscriptions {\r\n      #   principal\r\n      # }\r\n    }\r\n    paginatorInfo{\r\n      perPage\r\n      currentPage\r\n    }\r\n  }\r\n}",
+								"variables": "{\r\n  \"managerName\": \"BRD\",\r\n  \"currency\" : \"RON\",\r\n  \"riskIndicator\" : \"MEDIUM\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "https://investments-tracker.ddev.site/graphql",
+							"protocol": "https",
+							"host": [
+								"investments-tracker",
+								"ddev",
+								"site"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Obtain API Token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\" : \"admin@investments.com\",\r\n  \"password\": \"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://investments-tracker.ddev.site/api/login",
+					"protocol": "https",
+					"host": [
+						"investments-tracker",
+						"ddev",
+						"site"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BEARER_TOKEN",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
